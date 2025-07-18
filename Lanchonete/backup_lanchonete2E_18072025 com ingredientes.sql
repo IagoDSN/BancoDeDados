@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `cargo` (
 INSERT INTO `cargo` (`codCargo`, `nomeCargo`, `salarioInicial`, `funcoes`) VALUES
 	(1, 'Gerente', 4500.75, 'Administrar funcionários e controlar o estoque'),
 	(2, 'Balconista', 1804, 'Realizar o processo de venda'),
-	(3, 'Auxiliar de limpeza', 900.56, 'Limpeza da lanchonete e áreas afins.');
+	(3, 'Auxiliar de limpeza', 980, 'Limpeza da lanchonete e áreas afins.');
 
 -- Copiando estrutura para tabela lanchonete2e2025.categoria
 DROP TABLE IF EXISTS `categoria`;
@@ -103,9 +103,31 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   PRIMARY KEY (`codFuncionario`,`cargo_codCargo`),
   KEY `fk_funcionario_cargo1_idx` (`cargo_codCargo`),
   CONSTRAINT `fk_funcionario_cargo1` FOREIGN KEY (`cargo_codCargo`) REFERENCES `cargo` (`codCargo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3;
 
 -- Copiando dados para a tabela lanchonete2e2025.funcionario: ~0 rows (aproximadamente)
+INSERT INTO `funcionario` (`codFuncionario`, `nomeFuncionario`, `carteiraTrabalho`, `cpf`, `rg`, `orgaoExpedidor`, `dataExpedicao`, `dataNascimento`, `dataContratacao`, `dataDemissao`, `telefones`, `email`, `endereco`, `bairro`, `cidade`, `cep`, `estado`, `salarioAtual`, `cargo_codCargo`) VALUES
+	(1, 'Felipe Teixeira', NULL, '036.777.888-45', NULL, NULL, NULL, '1969-04-18', NULL, NULL, '(35)98811-1234', NULL, NULL, NULL, 'Machado', '37.750-000', 'MG', NULL, 1),
+	(2, 'Márcia Alves', NULL, '999.888.888-45', NULL, NULL, NULL, '1978-12-20', NULL, NULL, '(35)3295-4545', NULL, NULL, NULL, 'Machado', '37.750-000', 'MG', NULL, 2);
+
+-- Copiando estrutura para tabela lanchonete2e2025.ingrediente
+DROP TABLE IF EXISTS `ingrediente`;
+CREATE TABLE IF NOT EXISTS `ingrediente` (
+  `codIngrediente` int NOT NULL AUTO_INCREMENT,
+  `nomeIngrediente` varchar(100) NOT NULL,
+  `principaisUsos` varchar(2000) DEFAULT NULL,
+  `medidaCompra` varchar(50) DEFAULT NULL,
+  `estoqueIngrediente` float DEFAULT NULL,
+  PRIMARY KEY (`codIngrediente`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Copiando dados para a tabela lanchonete2e2025.ingrediente: ~5 rows (aproximadamente)
+INSERT INTO `ingrediente` (`codIngrediente`, `nomeIngrediente`, `principaisUsos`, `medidaCompra`, `estoqueIngrediente`) VALUES
+	(1, 'Farinha de trigo', '	Pães, bolos, massas, empanados', 'Kg', 138),
+	(2, 'Açúcar cristal', 'Bolos, sobremesas, bebidas', 'Kg', 90),
+	(3, 'Sal refinado', 'Temperos, cozimento em geral, conservas', 'Kg', 32),
+	(4, 'Creme de leite', 'Molhos, recheios, sobremesas, mousses', 'Unidade', 25),
+	(5, 'Leite integral', 'Bolos, cremes, molhos brancos', 'Litro', 28);
 
 -- Copiando estrutura para tabela lanchonete2e2025.itensvenda
 DROP TABLE IF EXISTS `itensvenda`;
@@ -171,6 +193,101 @@ CREATE TABLE IF NOT EXISTS `venda` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Copiando dados para a tabela lanchonete2e2025.venda: ~0 rows (aproximadamente)
+
+-- Copiando estrutura para view lanchonete2e2025.vi_cargos_altos_salarios
+DROP VIEW IF EXISTS `vi_cargos_altos_salarios`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_cargos_altos_salarios` (
+	`nomeCargo` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci'
+) ENGINE=MyISAM;
+
+-- Copiando estrutura para view lanchonete2e2025.vi_cargos_ordenados_salario
+DROP VIEW IF EXISTS `vi_cargos_ordenados_salario`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_cargos_ordenados_salario` (
+	`codCargo` INT NOT NULL,
+	`nomeCargo` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`salarioInicial` FLOAT NOT NULL
+) ENGINE=MyISAM;
+
+-- Copiando estrutura para view lanchonete2e2025.vi_idadefuncionarios
+DROP VIEW IF EXISTS `vi_idadefuncionarios`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_idadefuncionarios` (
+	`nomeFuncionario` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`nascimento` VARCHAR(1) NULL COLLATE 'utf8mb4_general_ci',
+	`idade` BIGINT NULL
+) ENGINE=MyISAM;
+
+-- Copiando estrutura para view lanchonete2e2025.vi_informacoesfuncionarios
+DROP VIEW IF EXISTS `vi_informacoesfuncionarios`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_informacoesfuncionarios` (
+	`codFuncionario` INT NOT NULL,
+	`cpf` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`nomeFuncionario` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`nomeCargo` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci'
+) ENGINE=MyISAM;
+
+-- Copiando estrutura para view lanchonete2e2025.vi_ingredientes_bolo
+DROP VIEW IF EXISTS `vi_ingredientes_bolo`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_ingredientes_bolo` (
+	`nomeIngrediente` VARCHAR(1) NOT NULL COLLATE 'utf8mb4_0900_ai_ci'
+) ENGINE=MyISAM;
+
+-- Copiando estrutura para view lanchonete2e2025.vi_ingredientes_estoque_baixo
+DROP VIEW IF EXISTS `vi_ingredientes_estoque_baixo`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_ingredientes_estoque_baixo` (
+	`nomeIngrediente` VARCHAR(1) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`medidaCompra` VARCHAR(1) NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`estoqueIngrediente` FLOAT NULL
+) ENGINE=MyISAM;
+
+-- Copiando estrutura para view lanchonete2e2025.vi_nascimentofuncionarios
+DROP VIEW IF EXISTS `vi_nascimentofuncionarios`;
+-- Criando tabela temporária para evitar erros de dependência de VIEW
+CREATE TABLE `vi_nascimentofuncionarios` (
+	`nomeFuncionario` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`cpf` VARCHAR(1) NOT NULL COLLATE 'utf8mb3_general_ci',
+	`nascimento` VARCHAR(1) NULL COLLATE 'utf8mb4_general_ci'
+) ENGINE=MyISAM;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_cargos_altos_salarios`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_cargos_altos_salarios` AS select `cargo`.`nomeCargo` AS `nomeCargo` from `cargo` where (`cargo`.`salarioInicial` > 2000)
+;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_cargos_ordenados_salario`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_cargos_ordenados_salario` AS select `cargo`.`codCargo` AS `codCargo`,`cargo`.`nomeCargo` AS `nomeCargo`,`cargo`.`salarioInicial` AS `salarioInicial` from `cargo` order by `cargo`.`salarioInicial`
+;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_idadefuncionarios`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_idadefuncionarios` AS select `f`.`nomeFuncionario` AS `nomeFuncionario`,date_format(`f`.`dataNascimento`,'%d/%m/%Y') AS `nascimento`,floor(((to_days(curdate()) - to_days(`f`.`dataNascimento`)) / 365)) AS `idade` from `funcionario` `f`
+;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_informacoesfuncionarios`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_informacoesfuncionarios` AS select `f`.`codFuncionario` AS `codFuncionario`,`f`.`cpf` AS `cpf`,`f`.`nomeFuncionario` AS `nomeFuncionario`,`c`.`nomeCargo` AS `nomeCargo` from (`funcionario` `f` join `cargo` `c` on((`f`.`cargo_codCargo` = `c`.`codCargo`)))
+;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_ingredientes_bolo`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_ingredientes_bolo` AS select `ingrediente`.`nomeIngrediente` AS `nomeIngrediente` from `ingrediente` where (`ingrediente`.`principaisUsos` like '%bolos%')
+;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_ingredientes_estoque_baixo`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_ingredientes_estoque_baixo` AS select `ingrediente`.`nomeIngrediente` AS `nomeIngrediente`,`ingrediente`.`medidaCompra` AS `medidaCompra`,`ingrediente`.`estoqueIngrediente` AS `estoqueIngrediente` from `ingrediente` where (`ingrediente`.`estoqueIngrediente` < 30)
+;
+
+-- Removendo tabela temporária e criando a estrutura VIEW final
+DROP TABLE IF EXISTS `vi_nascimentofuncionarios`;
+CREATE ALGORITHM=UNDEFINED SQL SECURITY DEFINER VIEW `vi_nascimentofuncionarios` AS select `f`.`nomeFuncionario` AS `nomeFuncionario`,`f`.`cpf` AS `cpf`,date_format(`f`.`dataNascimento`,'%d/%m/%Y') AS `nascimento` from `funcionario` `f`
+;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
